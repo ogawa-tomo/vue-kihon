@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vue.jsの基本</title>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <h1>ToDoリスト</h1>
+    <div id="app">
+      <form @submit.prevent="addToDo">
+        <input v-model="newToDo" placeholder="ToDoを入力" />
+        <button>登録</button>
+      </form>
+      <ul>
+        <li v-for="toDo in toDoList" :key="toDo.id">
+          {{ toDo.text }}<button @click="removeToDo(toDo)">削除</button>
+        </li>
+      </ul>
+    </div>
+
+    <script type="module">
+      import {
+        createApp,
+        reactive,
+        ref,
+      } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      createApp({
+        setup() {
+          let id = 0;
+          const newToDo = ref("");
+          const toDoList = ref([]);
+          function addToDo() {
+            toDoList.value.push({ id: id++, text: newToDo.value });
+            newToDo.value = "";
+          }
+          function removeToDo(toDo) {
+            toDoList.value = toDoList.value.filter((t) => t !== toDo);
+          }
+
+          return {
+            newToDo,
+            toDoList,
+            addToDo,
+            removeToDo,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
