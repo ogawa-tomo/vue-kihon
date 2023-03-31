@@ -12,7 +12,7 @@
         <button>登録</button>
       </form>
       <ul>
-        <li v-for="toDo in showToDoList" :key="toDo.id">
+        <li v-for="toDo in toDoList" :key="toDo.id">
           <div v-if="toDo.edit">
             <form
               style="display: inline"
@@ -48,66 +48,60 @@
 
       createApp({
         setup() {
-          const showToDoList = ref("");
+          const toDoList = ref("");
           const newToDo = ref("");
           const editToDo = ref("");
           onMounted(() => {
-            showToDoList.value = getToDoList();
+            toDoList.value = getToDoList();
           });
           const getToDoList = () => {
             return JSON.parse(localStorage.getItem("toDoList") ?? "[]");
           };
-          const setToDoList = (toDoList) => {
-            showToDoList.value = toDoList;
-            localStorage.setItem("toDoList", JSON.stringify(toDoList));
+          const setToDoList = () => {
+            localStorage.setItem("toDoList", JSON.stringify(toDoList.value));
           };
           const getMaxId = () => {
-            const toDoList = getToDoList();
-            if (toDoList.length === 0) {
+            if (toDoList.value.length === 0) {
               return 0;
             } else {
-              return Math.max(...toDoList.map((toDo) => toDo.id));
+              return Math.max(...toDoList.value.map((toDo) => toDo.id));
             }
           };
-          const getToDoById = (toDoList, id) => {
-            for (const toDo of toDoList) {
+          const getToDoById = (id) => {
+            for (const toDo of toDoList.value) {
               if (toDo.id === id) {
                 return toDo;
               }
             }
           };
           const addToDo = () => {
-            const toDoList = getToDoList();
-            toDoList.push({
+            toDoList.value.push({
               id: getMaxId() + 1,
               text: newToDo.value,
               edit: false,
             });
             newToDo.value = "";
-            setToDoList(toDoList);
+            setToDoList();
           };
           const startEditToDo = (id) => {
-            const toDoList = getToDoList();
-            const toDo = getToDoById(toDoList, id);
+            const toDo = getToDoById(id);
             toDo.edit = true;
             editToDo.value = toDo.text;
-            setToDoList(toDoList);
+            setToDoList();
           };
           const finishEditToDo = (id) => {
-            const toDoList = getToDoList();
-            const toDo = getToDoById(toDoList, id);
+            const toDo = getToDoById(id);
             toDo.edit = false;
             toDo.text = editToDo.value;
-            setToDoList(toDoList);
+            setToDoList();
           };
           const removeToDo = (id) => {
-            let toDoList = getToDoList();
-            toDoList = toDoList.filter((t) => t.id !== id);
+            toDoList.value = toDoList.value.filter((t) => t.id !== id);
             setToDoList(toDoList);
           };
 
           return {
-            showToDoList,
+            toDoList,
             newToDo,
             editToDo,
             getToDoList,
