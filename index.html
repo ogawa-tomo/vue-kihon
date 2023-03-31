@@ -51,11 +51,10 @@
           const newToDo = ref("");
           const editToDo = ref("");
           onMounted(() => {
-            toDoList.value = getToDoList();
+            toDoList.value = JSON.parse(
+              localStorage.getItem("toDoList") ?? "[]"
+            );
           });
-          const getToDoList = () => {
-            return JSON.parse(localStorage.getItem("toDoList") ?? "[]");
-          };
           const setToDoList = () => {
             localStorage.setItem("toDoList", JSON.stringify(toDoList.value));
           };
@@ -103,7 +102,6 @@
             toDoList,
             newToDo,
             editToDo,
-            getToDoList,
             addToDo,
             startEditToDo,
             finishEditToDo,
