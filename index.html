@@ -70,11 +70,11 @@
             toDo.text = editToDo.value;
             toDo.edit = false;
           }
-          function removeToDo(toDo) {
-            console.log(toDoList);
-            console.log(toDo);
-            toDoList = toDoList.filter((t) => t !== toDo);
-          }
+          const removeToDo = (toDo) => {
+            let toDoList = getToDoList();
+            toDoList = toDoList.filter((t) => t.id !== toDo.id);
+            setToDoList(toDoList);
+          };
 
           return {
             newToDo,
