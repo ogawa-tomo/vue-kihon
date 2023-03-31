@@ -12,7 +12,7 @@
         <button>登録</button>
       </form>
       <ul>
-        <li v-for="toDo in toDoList" :key="toDo.id">
+        <li v-for="toDo in getToDoList()" :key="toDo.id">
           <div v-if="toDo.edit">
             <input v-model="editToDo" />
             <button @click="finishEditToDo(toDo)">登録</button>
@@ -38,11 +38,30 @@
           let id = 0;
           const newToDo = ref("");
           const editToDo = ref("");
-          const toDoList = ref([]);
-          function addToDo() {
-            toDoList.value.push({ id: id++, text: newToDo.value, edit: false });
+          const getToDoList = () => {
+            return JSON.parse(localStorage.getItem("toDoList") ?? "[]");
+          };
+          const setToDoList = (toDoList) => {
+            localStorage.setItem("toDoList", JSON.stringify(toDoList));
+          };
+          const getMaxId = () => {
+            const toDoList = getToDoList();
+            if (toDoList.length === 0) {
+              return 0;
+            } else {
+              return Math.max(...toDoList.map((toDo) => toDo.id));
+            }
+          };
+          const addToDo = () => {
+            const toDoList = getToDoList();
+            toDoList.push({
+              id: getMaxId() + 1,
+              text: newToDo.value,
+              edit: false,
+            });
             newToDo.value = "";
-          }
+            setToDoList(toDoList);
+          };
           function startEditToDo(toDo) {
             toDo.edit = true;
             editToDo.value = toDo.text;
@@ -52,13 +71,15 @@
             toDo.edit = false;
           }
           function removeToDo(toDo) {
-            toDoList.value = toDoList.value.filter((t) => t !== toDo);
+            console.log(toDoList);
+            console.log(toDo);
+            toDoList = toDoList.filter((t) => t !== toDo);
           }
 
           return {
             newToDo,
             editToDo,
-            toDoList,
+            getToDoList,
             addToDo,
             startEditToDo,
             finishEditToDo,
