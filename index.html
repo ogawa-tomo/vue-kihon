@@ -55,7 +55,7 @@
               localStorage.getItem("toDoList") ?? "[]"
             );
           });
-          const setToDoList = () => {
+          const saveToDoList = () => {
             localStorage.setItem("toDoList", JSON.stringify(toDoList.value));
           };
           const getMaxId = () => {
@@ -79,7 +79,7 @@
               edit: false,
             });
             newToDo.value = "";
-            setToDoList();
+            saveToDoList();
           };
           const startEditToDo = (id) => {
             const toDo = getToDoById(id);
@@ -90,11 +90,11 @@
             const toDo = getToDoById(id);
             toDo.edit = false;
             toDo.text = editToDo.value;
-            setToDoList();
+            saveToDoList();
           };
           const removeToDo = (id) => {
             toDoList.value = toDoList.value.filter((t) => t.id !== id);
-            setToDoList(toDoList);
+            saveToDoList();
           };
 
           return {
