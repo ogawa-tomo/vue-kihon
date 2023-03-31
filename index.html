@@ -20,7 +20,9 @@
           <div v-else>
             {{ toDo.text }}
             <button @click="startEditToDo(toDo)">編集</button>
-            <button @click="removeToDo(toDo)">削除</button>
+            <form style="display: inline" @submit="removeToDo(toDo)">
+              <button>削除</button>
+            </form>
           </div>
         </li>
       </ul>
