@@ -15,11 +15,15 @@
         <li v-for="toDo in getToDoList()" :key="toDo.id">
           <div v-if="toDo.edit">
             <input v-model="editToDo" />
-            <button @click="finishEditToDo(toDo)">登録</button>
+            <form style="display: inline" @submit="finishEditToDo(toDo)">
+              <button>登録</button>
+            </form>
           </div>
           <div v-else>
             {{ toDo.text }}
-            <button @click="startEditToDo(toDo)">編集</button>
+            <form style="display: inline" @submit="startEditToDo(toDo)">
+              <button>編集</button>
+            </form>
             <form style="display: inline" @submit="removeToDo(toDo)">
               <button>削除</button>
             </form>
@@ -54,6 +58,14 @@
               return Math.max(...toDoList.map((toDo) => toDo.id));
             }
           };
+          const getToDoById = (id) => {
+            const toDoList = getToDoList();
+            for (const toDo of toDoList) {
+              if (toDo.id === id) {
+                return toDo;
+              }
+            }
+          };
           const addToDo = () => {
             const toDoList = getToDoList();
             toDoList.push({
@@ -64,14 +76,20 @@
             newToDo.value = "";
             setToDoList(toDoList);
           };
-          function startEditToDo(toDo) {
-            toDo.edit = true;
+          const startEditToDo = (toDo) => {
+            const toDoList = getToDoList();
+            const idx = toDoList.map((t) => t.id).indexOf(toDo.id);
+            toDoList[idx].edit = true;
             editToDo.value = toDo.text;
-          }
-          function finishEditToDo(toDo) {
-            toDo.text = editToDo.value;
-            toDo.edit = false;
-          }
+            setToDoList(toDoList);
+          };
+          const finishEditToDo = (toDo) => {
+            const toDoList = getToDoList();
+            const idx = toDoList.map((t) => t.id).indexOf(toDo.id);
+            toDoList[idx].edit = false;
+            toDoList[idx].text = editToDo.value;
+            setToDoList(toDoList);
+          };
           const removeToDo = (toDo) => {
             let toDoList = getToDoList();
             toDoList = toDoList.filter((t) => t.id !== toDo.id);
