@@ -18,7 +18,7 @@
               style="display: inline"
               @submit.prevent="finishEditToDo(toDo)"
             >
-              <input v-model="editToDo" />
+              <input v-model="editToDo[toDo.id]" />
               <button>登録</button>
             </form>
           </div>
@@ -39,6 +39,7 @@
       import {
         createApp,
         ref,
+        reactive,
       } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
       createApp({
@@ -47,7 +48,7 @@
             JSON.parse(localStorage.getItem("toDoList") ?? "[]")
           );
           const newToDo = ref("");
-          const editToDo = ref("");
+          const editToDo = reactive({});
           const saveToDoList = () => {
             localStorage.setItem("toDoList", JSON.stringify(toDoList.value));
           };
@@ -69,11 +70,11 @@
           };
           const startEditToDo = (toDo) => {
             toDo.edit = true;
-            editToDo.value = toDo.text;
+            editToDo[toDo.id] = toDo.text;
           };
           const finishEditToDo = (toDo) => {
             toDo.edit = false;
-            toDo.text = editToDo.value;
+            toDo.text = editToDo[toDo.id];
             saveToDoList();
           };
           const removeToDo = (toDo) => {
