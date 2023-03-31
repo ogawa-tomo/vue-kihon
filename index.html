@@ -42,19 +42,15 @@
       import {
         createApp,
         ref,
-        onMounted,
       } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
       createApp({
         setup() {
-          const toDoList = ref("");
+          const toDoList = ref(
+            JSON.parse(localStorage.getItem("toDoList") ?? "[]")
+          );
           const newToDo = ref("");
           const editToDo = ref("");
-          onMounted(() => {
-            toDoList.value = JSON.parse(
-              localStorage.getItem("toDoList") ?? "[]"
-            );
-          });
           const saveToDoList = () => {
             localStorage.setItem("toDoList", JSON.stringify(toDoList.value));
           };
