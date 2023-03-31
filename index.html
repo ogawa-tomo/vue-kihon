@@ -12,19 +12,25 @@
         <button>登録</button>
       </form>
       <ul>
-        <li v-for="toDo in getToDoList()" :key="toDo.id">
+        <li v-for="toDo in showToDoList" :key="toDo.id">
           <div v-if="toDo.edit">
-            <input v-model="editToDo" />
-            <form style="display: inline" @submit="finishEditToDo(toDo.id)">
+            <form
+              style="display: inline"
+              @submit.prevent="finishEditToDo(toDo.id)"
+            >
+              <input v-model="editToDo" />
               <button>登録</button>
             </form>
           </div>
           <div v-else>
             {{ toDo.text }}
-            <form style="display: inline" @submit="startEditToDo(toDo.id)">
+            <form
+              style="display: inline"
+              @submit.prevent="startEditToDo(toDo.id)"
+            >
               <button>編集</button>
             </form>
-            <form style="display: inline" @submit="removeToDo(toDo.id)">
+            <form style="display: inline" @submit.prevent="removeToDo(toDo.id)">
               <button>削除</button>
             </form>
           </div>
@@ -37,17 +43,22 @@
         createApp,
         reactive,
         ref,
+        onMounted,
       } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
       createApp({
         setup() {
-          let id = 0;
+          const showToDoList = ref("");
           const newToDo = ref("");
           const editToDo = ref("");
+          onMounted(() => {
+            showToDoList.value = getToDoList();
+          });
           const getToDoList = () => {
             return JSON.parse(localStorage.getItem("toDoList") ?? "[]");
           };
           const setToDoList = (toDoList) => {
+            showToDoList.value = toDoList;
             localStorage.setItem("toDoList", JSON.stringify(toDoList));
           };
           const getMaxId = () => {
@@ -96,6 +107,7 @@
           };
 
           return {
+            showToDoList,
             newToDo,
             editToDo,
             getToDoList,
