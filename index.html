@@ -16,7 +16,7 @@
           <div v-if="toDo.edit">
             <form
               style="display: inline"
-              @submit.prevent="finishEditToDo(toDo.id)"
+              @submit.prevent="finishEditToDo(toDo)"
             >
               <input v-model="editToDo" />
               <button>登録</button>
@@ -24,13 +24,10 @@
           </div>
           <div v-else>
             {{ toDo.text }}
-            <form
-              style="display: inline"
-              @submit.prevent="startEditToDo(toDo.id)"
-            >
+            <form style="display: inline" @submit.prevent="startEditToDo(toDo)">
               <button>編集</button>
             </form>
-            <form style="display: inline" @submit.prevent="removeToDo(toDo.id)">
+            <form style="display: inline" @submit.prevent="removeToDo(toDo)">
               <button>削除</button>
             </form>
           </div>
@@ -61,13 +58,6 @@
               return Math.max(...toDoList.value.map((toDo) => toDo.id));
             }
           };
-          const getToDoById = (id) => {
-            for (const toDo of toDoList.value) {
-              if (toDo.id === id) {
-                return toDo;
-              }
-            }
-          };
           const addToDo = () => {
             toDoList.value.push({
               id: getMaxId() + 1,
@@ -77,19 +67,17 @@
             newToDo.value = "";
             saveToDoList();
           };
-          const startEditToDo = (id) => {
-            const toDo = getToDoById(id);
+          const startEditToDo = (toDo) => {
             toDo.edit = true;
             editToDo.value = toDo.text;
           };
-          const finishEditToDo = (id) => {
-            const toDo = getToDoById(id);
+          const finishEditToDo = (toDo) => {
             toDo.edit = false;
             toDo.text = editToDo.value;
             saveToDoList();
           };
-          const removeToDo = (id) => {
-            toDoList.value = toDoList.value.filter((t) => t.id !== id);
+          const removeToDo = (toDo) => {
+            toDoList.value = toDoList.value.filter((t) => t !== toDo);
             saveToDoList();
           };
 
