@@ -27,9 +27,7 @@
             <form style="display: inline" @submit.prevent="startEditToDo(toDo)">
               <button>編集</button>
             </form>
-            <form style="display: inline" @submit.prevent="removeToDo(toDo)">
-              <button>削除</button>
-            </form>
+            <button @click="removeToDo(toDo)">削除</button>
           </div>
         </li>
       </ul>
