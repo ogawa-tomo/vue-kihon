@@ -44,23 +44,23 @@
 
       createApp({
         setup() {
-          const toDoList = ref(
+          const toDoList = reactive(
             JSON.parse(localStorage.getItem("toDoList") ?? "[]")
           );
           const newToDo = ref("");
           const editToDo = reactive({});
           const saveToDoList = () => {
-            localStorage.setItem("toDoList", JSON.stringify(toDoList.value));
+            localStorage.setItem("toDoList", JSON.stringify(toDoList));
           };
           const getMaxId = () => {
-            if (toDoList.value.length === 0) {
+            if (toDoList.length === 0) {
               return 0;
             } else {
-              return Math.max(...toDoList.value.map((toDo) => toDo.id));
+              return Math.max(...toDoList.map((toDo) => toDo.id));
             }
           };
           const addToDo = () => {
-            toDoList.value.push({
+            toDoList.push({
               id: getMaxId() + 1,
               text: newToDo.value,
               edit: false,
@@ -78,7 +78,8 @@
             saveToDoList();
           };
           const removeToDo = (toDo) => {
-            toDoList.value = toDoList.value.filter((t) => t !== toDo);
+            const idx = toDoList.indexOf(toDo);
+            toDoList.splice(idx, 1);
             saveToDoList();
           };
 
