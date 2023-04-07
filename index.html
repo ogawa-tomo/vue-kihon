@@ -13,12 +13,12 @@
       </form>
       <ul>
         <li v-for="toDo in toDoList" :key="toDo.id">
-          <div v-if="toDo.edit">
+          <div v-if="editingToDo(toDo)">
             <form
               style="display: inline"
               @submit.prevent="finishEditToDo(toDo)"
             >
-              <input v-model="editToDo[toDo.id]" />
+              <input v-model="editingToDo(toDo).text" />
               <button>保存</button>
             </form>
           </div>
@@ -47,7 +47,7 @@
             JSON.parse(localStorage.getItem("toDoList") ?? "[]")
           );
           const newToDo = ref("");
-          const editToDo = reactive({});
+          const editingToDoList = reactive([]);
           const saveToDoList = () => {
             localStorage.setItem("toDoList", JSON.stringify(toDoList));
           };
@@ -62,18 +62,20 @@
             toDoList.push({
               id: getMaxId.value + 1,
               text: newToDo.value,
-              edit: false,
             });
             newToDo.value = "";
             saveToDoList();
           };
           const startEditToDo = (toDo) => {
-            toDo.edit = true;
-            editToDo[toDo.id] = toDo.text;
+            editingToDoList.push({ id: toDo.id, text: toDo.text });
+          };
+          const editingToDo = (toDo) => {
+            return editingToDoList.find((t) => t.id === toDo.id);
           };
           const finishEditToDo = (toDo) => {
-            toDo.edit = false;
-            toDo.text = editToDo[toDo.id];
+            toDo.text = editingToDo(toDo).text;
+            const idx = editingToDoList.indexOf(editingToDo(toDo));
+            editingToDoList.splice(idx, 1);
             saveToDoList();
           };
           const removeToDo = (toDo) => {
@@ -85,9 +87,9 @@
           return {
             toDoList,
             newToDo,
-            editToDo,
             addToDo,
             startEditToDo,
+            editingToDo,
             finishEditToDo,
             removeToDo,
           };
