@@ -38,7 +38,6 @@
         createApp,
         ref,
         reactive,
-        computed,
       } from "https://unpkg.com/vue@3.2/dist/vue.esm-browser.js";
 
       createApp({
@@ -51,16 +50,13 @@
           const saveToDoList = () => {
             localStorage.setItem("toDoList", JSON.stringify(toDoList));
           };
-          const getMaxId = computed(() => {
-            if (toDoList.length === 0) {
-              return 0;
-            } else {
-              return Math.max(...toDoList.map((toDo) => toDo.id));
-            }
-          });
           const addToDo = () => {
+            const id =
+              toDoList.length === 0
+                ? 1
+                : Math.max(...toDoList.map((toDo) => toDo.id)) + 1;
             toDoList.push({
-              id: getMaxId.value + 1,
+              id: id,
               text: newToDo.value,
             });
             newToDo.value = "";
