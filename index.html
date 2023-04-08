@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vue.jsの基本</title>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <h1>ToDoリスト</h1>
+    <div id="app">
+      <form @submit.prevent="addToDo">
+        <input v-model="newToDo" placeholder="ToDoを入力" />
+        <button>登録</button>
+      </form>
+      <ul>
+        <li v-for="toDo in toDoList" :key="toDo.id">
+          <div v-if="editingToDo(toDo)">
+            <form
+              style="display: inline"
+              @submit.prevent="finishEditToDo(toDo)"
+            >
+              <input v-model="editingToDo(toDo).text" />
+              <button>保存</button>
+            </form>
+          </div>
+          <div v-else>
+            {{ toDo.text }}
+            <form style="display: inline" @submit.prevent="startEditToDo(toDo)">
+              <button>編集</button>
+            </form>
+            <button @click="removeToDo(toDo)">削除</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        reactive,
+      } from "https://unpkg.com/vue@3.2/dist/vue.esm-browser.js";
+
+      createApp({
+        setup() {
+          const toDoList = reactive(
+            JSON.parse(localStorage.getItem("toDoList") ?? "[]")
+          );
+          const newToDo = ref("");
+          const editingToDoList = reactive([]);
+          const saveToDoList = () => {
+            localStorage.setItem("toDoList", JSON.stringify(toDoList));
+          };
+          const addToDo = () => {
+            const id =
+              toDoList.length === 0
+                ? 1
+                : Math.max(...toDoList.map((toDo) => toDo.id)) + 1;
+            toDoList.push({
+              id: id,
+              text: newToDo.value,
+            });
+            newToDo.value = "";
+            saveToDoList();
+          };
+          const startEditToDo = (toDo) => {
+            editingToDoList.push({ id: toDo.id, text: toDo.text });
+          };
+          const editingToDo = (toDo) => {
+            return editingToDoList.find((t) => t.id === toDo.id);
+          };
+          const finishEditToDo = (toDo) => {
+            toDo.text = editingToDo(toDo).text;
+            const idx = editingToDoList.indexOf(editingToDo(toDo));
+            editingToDoList.splice(idx, 1);
+            saveToDoList();
+          };
+          const removeToDo = (toDo) => {
+            const idx = toDoList.indexOf(toDo);
+            toDoList.splice(idx, 1);
+            saveToDoList();
+          };
+
+          return {
+            toDoList,
+            newToDo,
+            addToDo,
+            startEditToDo,
+            editingToDo,
+            finishEditToDo,
+            removeToDo,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
